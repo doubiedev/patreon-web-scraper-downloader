@@ -17,5 +17,8 @@
   "bugs": {
     "url": "https://github.com/doubiedev/patreon-web-scraper-downloader/issues"
   },
-  "homepage": "https://github.com/doubiedev/patreon-web-scraper-downloader#readme"
+  "homepage": "https://github.com/doubiedev/patreon-web-scraper-downloader#readme",
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  }
 }
