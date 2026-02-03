@@ -1,24 +1,29 @@
 {
-  "name": "patreon-web-scraper-downloader",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/doubiedev/patreon-web-scraper-downloader.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
-  "bugs": {
-    "url": "https://github.com/doubiedev/patreon-web-scraper-downloader/issues"
-  },
-  "homepage": "https://github.com/doubiedev/patreon-web-scraper-downloader#readme",
-  "devDependencies": {
-    "typescript": "^5.9.3"
-  }
+    "name": "patreon-web-scraper-downloader",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "npx tsx src/index.ts",
+        "login": "npx tsx src/login.ts",
+        "setup": "npm i && npm run login",
+        "clean": "rm -rf dist",
+        "logout": "rm -rf browser-data"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/doubiedev/patreon-web-scraper-downloader.git"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "type": "commonjs",
+    "bugs": {
+        "url": "https://github.com/doubiedev/patreon-web-scraper-downloader/issues"
+    },
+    "homepage": "https://github.com/doubiedev/patreon-web-scraper-downloader#readme",
+    "devDependencies": {
+        "typescript": "^5.9.3"
+    }
 }
