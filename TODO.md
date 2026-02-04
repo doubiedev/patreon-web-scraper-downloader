@@ -2,23 +2,20 @@
 
 - [x] Read puppeteer-web-scraper code, figure it out how it works more or less
 - [x] Do the actions on patreon manually, make a flow diagram based on this for what the program should do
-- [ ] Config options:
+    - Flow Diagram:
+        - Open browser
+        - navigate to creator's patreon web page
+        - open filters
+        - loop over filters: select and apply by year
+        - loop over "load more" until every post is loaded
+        - if scrape comments: load & save comments
+        - if scrape replies: load & save replies
+        - save webpage as mhtml for each year
+    - NOTE: If I save the document, delete current loaded posts, and load some more posts, I may be able to avoid the memory problems.
+- [x] Config options:
     - creator name
     - scrape by - year, month
     - num posts to scrape
     - scrape comments
     - scrape replies
-
-
-## Flow diagram
-
-- Open browser
-- navigate to creator's patreon web page
-- open filters
-- loop over filters: select and apply by year
-- loop over "load more" until every post is loaded
-- if scrape comments: load & save comments
-- if scrape replies: load & save replies
-- save webpage as mhtml for each year
-
-NOTE: If I save the document, delete current loaded posts, and load some more posts, I may be able to avoid the memory problems.
+- [ ] 
