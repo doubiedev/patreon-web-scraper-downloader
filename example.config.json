@@ -1,7 +1,7 @@
 {
     "creator": "johndoe",
-    "scrape_by_year": true,
-    "num_posts_to_scrape": 90,
-    "scrape_comments": true,
-    "scrape_replies": true
+    "scrapeByYear": true,
+    "numPostsToScrape": 90,
+    "scrapeComments": true,
+    "scrapeReplies": true
 }

@@ -5,8 +5,8 @@
     "main": "index.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "start": "ts-node src/index.ts",
-        "login": "ts-node src/login.js",
+        "start": "tsx src/index.ts",
+        "login": "tsx src/login.js",
         "setup": "npm i && npm run login",
         "clean": "rm -rf dist",
         "logout": "rm -rf browser-data"
@@ -26,7 +26,7 @@
     "devDependencies": {
         "@types/node": "^25.2.0",
         "@types/puppeteer": "^5.4.7",
-        "ts-node": "^10.9.2",
+        "tsx": "^4.21.0",
         "typescript": "^5.9.3"
     },
     "dependencies": {
