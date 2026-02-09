@@ -1,13 +1,6 @@
 import fs from "fs";
 import path from "path";
-
-// export type Config = {
-//     creator: string,
-//     scrapeByYear: boolean,
-//     numPostsToScrape: number,
-//     scrapeComments: boolean,
-//     scrapeReplies: boolean,
-// };
+import { fileURLToPath } from "url";
 
 const configSchema = {
     creator: "string",
@@ -24,6 +17,25 @@ export type Config = {
     boolean;
 };
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const DEFAULT_BASE_DIR = path.resolve(__dirname, "..");
+
+function getBaseDir(): string {
+    const override = process.env.CONFIG_DIR;
+
+    if (override && override.trim() !== "") {
+        return path.resolve(override);
+    }
+
+    return DEFAULT_BASE_DIR;
+}
+
+function getConfigFilePath(): string {
+    return path.join(getBaseDir(), ".config.json");
+}
+
 export function readConfig(): Config {
     const fullPath = getConfigFilePath();
 
@@ -34,13 +46,6 @@ export function readConfig(): Config {
     } catch (err) {
         throw err;
     }
-}
-
-function getConfigFilePath(): string {
-    const configFileName = ".config.json";
-    const rootDir = path.resolve(import.meta.dirname, "..");
-
-    return path.join(rootDir, configFileName);
 }
 
 function validateConfig(rawConfig: unknown): Config {
@@ -68,7 +73,6 @@ function validateConfig(rawConfig: unknown): Config {
 function writeConfig(config: Config): void {
     const fullPath = getConfigFilePath();
 
-    // NOTE: might not need to set this if i'm giving it a good config to begin with
     const rawConfig: Config = {
         creator: config.creator,
         numPostsToScrape: config.numPostsToScrape,
@@ -87,7 +91,6 @@ export function createConfig(config: Config): void {
 
 export function updateConfig(options: Partial<Config>): void {
     const config = readConfig();
-    // NOTE: might need to double check this actually is a config here
     const newConfig = { ...config, ...options } as Config;
     writeConfig(newConfig);
 }

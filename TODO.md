@@ -18,4 +18,4 @@
     - num posts to scrape
     - scrape comments
     - scrape replies
-- [ ] 
+- [x] Add config tests
