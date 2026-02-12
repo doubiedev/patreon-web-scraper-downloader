@@ -6,8 +6,9 @@
     "scripts": {
         "test": "vitest",
         "start": "tsx src/index.ts",
+        "config": "tsx src/config.ts",
         "login": "tsx src/login.js",
-        "setup": "npm i && npm run login",
+        "setup": "npm i && npm run config && npm run login",
         "clean": "rm -rf dist",
         "logout": "rm -rf browser-data"
     },
