@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import readline from "readline/promises";
 
 const configSchema = {
     creator: "string",
@@ -85,12 +86,197 @@ function writeConfig(config: Config): void {
     fs.writeFileSync(fullPath, data, { encoding: "utf-8" });
 }
 
-export function createConfig(config: Config): void {
-    writeConfig(config);
-}
-
 export function updateConfig(options: Partial<Config>): void {
     const config = readConfig();
     const newConfig = { ...config, ...options } as Config;
     writeConfig(newConfig);
 }
+
+function configExists(): boolean {
+    return fs.existsSync(getConfigFilePath());
+}
+
+async function createConfig(): Promise<void> {
+    const rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout
+    });
+
+    async function askYesNo(question: string, defaultToYes: boolean): Promise<boolean> {
+        while (true) {
+            const answer = (await rl.question(question)).trim().toLowerCase();
+
+            if (answer === "y" || answer === "yes") return true;
+            if (answer === "n" || answer === "no") return false;
+            if (answer === "") return defaultToYes;
+
+            console.log("Please enter 'y' or 'n'.");
+        }
+    }
+
+    async function askQuestion(question: string): Promise<string> {
+        const answer = (await rl.question(question)).trim();
+        return answer;
+    }
+
+    function displayCommands(): void {
+        console.log("");
+        console.log("Commands:");
+        console.log("(1) Show Config");
+        console.log("(2) Update Config");
+        console.log("(3) Create New Config");
+        console.log("(4) Exit");
+        console.log("");
+    }
+
+    while (true) {
+        displayCommands();
+        const choice = await askQuestion("> ");
+
+        switch (choice) {
+            case "1":
+                console.log("");
+                if (!configExists()) {
+                    console.log("No config found.");
+                    break;
+                }
+                try {
+                    const config = readConfig();
+                    console.log("===CONFIG===");
+                    console.log("Creator: ", config.creator);
+                    console.log("Number of posts to scrape: ", config.numPostsToScrape);
+                    console.log("Scrape by year: ", config.scrapeByYear);
+                    console.log("Scrape comments: ", config.scrapeComments);
+                    console.log("Scrape replies: ", config.scrapeReplies);
+                    console.log("");
+                    break;
+                } catch (err) {
+                    console.error("Error reading config file:", err);
+                    break;
+                }
+            case "2":
+                console.log("");
+                if (!configExists()) {
+                    console.log("No config found.");
+                    break;
+                }
+                try {
+                    const config = readConfig();
+                    console.log("Leave empty to use the config's <original value>.");
+
+                    let confirmUpdatedConfig = false;
+                    while (confirmUpdatedConfig === false) {
+                        console.log("");
+                        const creator = await askQuestion(`Creator username <${config.creator}>: `);
+
+                        let numPostsToScrape;
+                        while (true) {
+                            numPostsToScrape = await askQuestion(`Number of posts to scrape <${config.numPostsToScrape}>: `);
+                            if (parseInt(numPostsToScrape) > 0 || numPostsToScrape === "") {
+                                break;
+                            } else {
+                                console.log("Please enter a positive integer.");
+                            }
+                        }
+
+                        const scrapeByYear = await askYesNo(`Scrape by year <${config.scrapeByYear}> (y/n): `, config.scrapeByYear);
+                        const scrapeComments = await askYesNo(`Scrape comments <${config.scrapeComments}> (y/n): `, config.scrapeComments);
+                        const scrapeReplies = await askYesNo(`Scrape replies <${config.scrapeReplies}> (y/n): `, config.scrapeReplies);
+
+                        const updatedConfig: Config = {
+                            creator: creator === "" ? config.creator : creator,
+                            numPostsToScrape: numPostsToScrape === "" ? config.numPostsToScrape : parseInt(numPostsToScrape),
+                            scrapeByYear: scrapeByYear,
+                            scrapeComments: scrapeComments,
+                            scrapeReplies: scrapeReplies,
+                        }
+
+                        console.log("");
+                        console.log("===UPDATED CONFIG===");
+                        console.log("Creator: ", updatedConfig.creator);
+                        console.log("Number of posts to scrape: ", updatedConfig.numPostsToScrape);
+                        console.log("Scrape by year: ", updatedConfig.scrapeByYear);
+                        console.log("Scrape comments: ", updatedConfig.scrapeComments);
+                        console.log("Scrape replies: ", updatedConfig.scrapeReplies);
+                        console.log("");
+
+                        confirmUpdatedConfig = await askYesNo("Confirm updated config details? (Y/n): ", true);
+
+                        if (confirmUpdatedConfig) {
+                            writeConfig(updatedConfig);
+                        }
+                    }
+                    break;
+                } catch (err) {
+                    console.error("Error reading config file:", err);
+                    break;
+                }
+            case "3":
+                if (!configExists()) {
+                    console.log("No config found.");
+                    break;
+                }
+                try {
+                    const config = readConfig();
+
+                    let confirmNewConfig = false;
+                    while (confirmNewConfig === false) {
+                        console.log("");
+                        const creator = await askQuestion(`Creator username: `);
+
+                        let numPostsToScrape;
+                        while (true) {
+                            numPostsToScrape = await askQuestion(`Number of posts to scrape: `);
+                            if (parseInt(numPostsToScrape) > 0) {
+                                break;
+                            } else {
+                                console.error("Please enter a positive integer.");
+                            }
+                        }
+
+                        const scrapeByYear = await askYesNo(`Scrape by year (Y/n): `, true);
+                        const scrapeComments = await askYesNo(`Scrape comments (Y/n): `, true);
+                        const scrapeReplies = await askYesNo(`Scrape replies (Y/n): `, true);
+
+                        const newConfig: Config = {
+                            creator: creator === "" ? config.creator : creator,
+                            numPostsToScrape: parseInt(numPostsToScrape),
+                            scrapeByYear: scrapeByYear,
+                            scrapeComments: scrapeComments,
+                            scrapeReplies: scrapeReplies,
+                        }
+
+                        console.log("");
+                        console.log("===NEW CONFIG===");
+                        console.log("Creator: ", newConfig.creator);
+                        console.log("Number of posts to scrape: ", newConfig.numPostsToScrape);
+                        console.log("Scrape by year: ", newConfig.scrapeByYear);
+                        console.log("Scrape comments: ", newConfig.scrapeComments);
+                        console.log("Scrape replies: ", newConfig.scrapeReplies);
+                        console.log("");
+
+                        confirmNewConfig = await askYesNo("Confirm new config details? (Y/n): ", true);
+
+                        if (confirmNewConfig) {
+                            writeConfig(newConfig);
+                        }
+                    }
+                    break;
+                } catch (err) {
+                    console.error("Error reading config file:", err);
+                    break;
+                }
+            default:
+                console.log("");
+                break;
+        }
+
+        if (choice === "4") {
+            break;
+        }
+    }
+
+    rl.close()
+}
+
+createConfig();
