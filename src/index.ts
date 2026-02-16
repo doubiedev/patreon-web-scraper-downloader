@@ -1,16 +1,22 @@
-import { readConfig } from "./config";
+import { configExists, readConfig, type Config } from "./config.js";
 
 function main() {
-    // TODO: check config file exists
-    // config doesnt exists, would you like to create one now?
-    // if yes, prompt user for config details
+    const cfg = getConfig();
+}
 
-    try {
-        readConfig();
-    } catch (err) {
-        console.error("Config file does not exist, please create one with 'npm run config'.");
+function getConfig(): Config {
+    if (!configExists()) {
+        console.error("No config found. Please create a config first with 'npm run config'.");
+        process.exit(1);
     }
 
+    try {
+        const config = readConfig();
+        return config;
+    } catch (err) {
+        console.error("Error reading config file:", err);
+        process.exit(1);
+    }
 }
 
 main();

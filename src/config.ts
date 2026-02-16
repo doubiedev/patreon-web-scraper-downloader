@@ -92,7 +92,7 @@ export function updateConfig(options: Partial<Config>): void {
     writeConfig(newConfig);
 }
 
-function configExists(): boolean {
+export function configExists(): boolean {
     return fs.existsSync(getConfigFilePath());
 }
 
